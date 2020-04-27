@@ -33,13 +33,13 @@ A “collaborative transaction” is defined as a transaction where multiple, in
 
 The SWaP Protocol was developed with the following requirements in mind
 
-* **Peer-To-Peer.** No trusted third party should be required to enable communication between collaborating parties.
-* **Permissionless.** There should be no limits on which network participants are able to participate in any given collaborative transaction.
-* **Trustless.** Parties' funds should be secure and not subject to be spent other than in the manner intended by a given participant.
-* **Private.** Participating in a collaborative transaction should have the same level of privacy as any other transaction.
-* **Recoverable.** A user’s entire history of SWaP protocol activity should be recoverable, by that user’s wallet, given only a set of private keys.
-* **Non-Invasive.** It should require no changes to the underlying Bitcoin Cash protocol.
-* **Extensible.** The system should allow for new classes of collaborative transactions as the network evolves
+* ***Peer-To-Peer.*** No trusted third party should be required to enable communication between collaborating parties.
+* ***Permissionless.*** There should be no limits on which network participants are able to participate in any given collaborative transaction.
+* ***Trustless.*** Parties' funds should be secure and not subject to be spent other than in the manner intended by a given participant.
+* ***Private.*** Participating in a collaborative transaction should have the same level of privacy as any other transaction.
+* ***Recoverable.*** A user’s entire history of SWaP protocol activity should be recoverable, by that user’s wallet, given only a set of private keys.
+* ***Non-Invasive.*** It should require no changes to the underlying Bitcoin Cash protocol.
+* ***Extensible.*** The system should allow for new classes of collaborative transactions as the network evolves
 
 # 2. Protocol
 
@@ -67,14 +67,14 @@ The Signal, Watch, and Pay (SWaP) message classes are used to represent differen
 
 A Signal is a message consisting of structured metadata within a single OP_RETURN output message located at output index 0 of a transaction. The format for the metadata must be followed exactly in order to be considered valid. The structured metadata format allows for indexing and searching of the blockchain for active Signals.
 
-***SLP Atomic Swap (Type 1):*** This Signal is broadcast by a party wishing to buy or sell a given token in exchange for BCH satoshis. The required format for the message is:
+**SLP Atomic Swap (Type 1):** This Signal is broadcast by a party wishing to buy or sell a given token in exchange for BCH satoshis. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x01> <token_id_bytes> <BUY_or_SELL_ascii> <rate_in_sats_int> <proof_of_reserve_int> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <minimum_sats_to_exchange_int>```
 
 [Type 1 Example (ASM):](https://explorer.bitcoin.com/bch/tx/b03883ca0b106ea5e7113d6cbe46b9ec37ac6ba437214283de2d9cf2fbdc997f)
 
 ```OP_RETURN 53575000 01 01 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 53454c4c 0258 00 90dfb75fef5f07e384df4703b853a2741b8e6f3ef31ef8e5187a17fb107547f8 01 00```
 		
-***Multi-Party Escrow (Type 2):*** This Signal is broadcast by a party wishing to find a counterparty to co-fund a P2SH script contract. The canonical application is multi-party escrow (such as wagering) using oracle data. The required format for the message is:
+**Multi-Party Escrow (Type 2):** This Signal is broadcast by a party wishing to find a counterparty to co-fund a P2SH script contract. The canonical application is multi-party escrow (such as wagering) using oracle data. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x02> <oracle_bfp_bytes> <contract_terms_index_int> <contract_party_index> <compiler_id_ascii> <compiler_contract_version_ascii> <pubkey_bytes> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <appended_scriptPubKey_bytes*> <appended_sats_int*>```
 
 [Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/b03883ca0b106ea5e7113d6cbe46b9ec37ac6ba437214283de2d9cf2fbdc997f)
@@ -86,17 +86,17 @@ A Signal is a message consisting of structured metadata within a single OP_RETUR
 
 ### 2.1.2 Payment
 
-A Payment is a series of data chunks, representing a partially signed Bitcoin Cash transaction, encapsulated within OP_RETURN messages located at vout=0 (i.e. the first output) in each data chunk’s respective transaction. The file chunks reference each other using the vout=1 output as a pointer to the next data chunk. The transaction hash belonging to the final transaction made in the series of uploaded data chunks contains a special set of metadata parameters, including the number of chunks associated with the partially signed transaction data. This scheme is derived from the Bitcoin Files Protocol.
+A Payment is a series of data chunks, representing a partially signed Bitcoin Cash transaction, encapsulated within OP_RETURN messages located at *vout=0* (the first output) in each data chunk’s respective transaction. The file chunks reference each other using the *vout=1* output as a pointer to the next data chunk. The transaction hash belonging to the final transaction made in the series of uploaded data chunks contains a special set of metadata parameters, including the number of chunks associated with the partially signed transaction data. This scheme is derived from the [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md).
 
 The metadata OP_RETURN messages for the various types of Payments are as follows:
 
-***SLP Atomic Swap (Type 1):*** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. The required format for the message is:
+**SLP Atomic Swap (Type 1):** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x01> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```
 
-***Multi-Party Escrow (Type 2):*** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. For validation purposes, the ScriptPubKey of the script contract is also included in the metadata. The required format for the message is:
+**Multi-Party Escrow (Type 2):** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. For validation purposes, the ScriptPubKey of the script contract is also included in the metadata. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x02> <chunk_count_int> <signal_tx_id> <p2sh_scriptPubKey> <chunk_X_data_bytes>```
 
-***Threshold Crowdfunding (Type 3):*** This Payment contains only the data for a single, signed Transaction Input (TxIn) precisely as it would appear in a transaction spending the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
+**Threshold Crowdfunding (Type 3):** This Payment contains only the data for a single, signed Transaction Input (TxIn) precisely as it would appear in a transaction spending the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x03> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```
 
 ## 2.2 Oracle Signals
@@ -173,37 +173,39 @@ Sign inputs contributed by Accepting Party
 
 The procedure for negotiating and executing a Threshold Crowdfund via the SWaP protocol is as follows:
 
-The Offering Party broadcasts a Signal with information about the desired exchange. This information includes:
-<campaign_uri_utf8> A URI for the crowdfunding campaign. This can be a web URI, and IPFS URI, a Bitcoin Files Protocol URI, or any other valid informational URI. The URI prefix (if appropriate) should be included for disambiguation.
-<out_count_and_outs_bytes> A representation of the output portion of the intended transaction. The format of this data is described at https://bitcoin.org/en/developer-reference#raw-transaction-format and is as follows:
-compactSize uint (varying byte length) - Number of outputs in this transaction.
-txOuts (varying byte length) - Transaction outputs, concatenated. See description of txOut below.
-int64_t (8 bytes) - Number of satoshis to spend. May be zero; the sum of all outputs may not exceed the sum of satoshis previously spent to the outpoints provided in the input section.
-compactSize uint (1+ bytes) - Number of bytes in the pubkey script. Maximum is 10,000 bytes.
-char[] (varying byte length) - The scriptPubKey. Defines the conditions which must be satisfied to spend this output.
-The Accepting Party finds the offered Signal. In most cases, the Offering Party will publicize the offer as a means to attract funders. Using the output data in the Signal, the Accepting party constructs a set of signed inputs (to be used as a portion of the crowdfund) with the following procedure:
-Create a new (Version 1) transaction with nLocktime=0 and each input’s nSequence=UINT_MAX (0xffffffff)
-Add the outputs as defined in the Offer Signal
-Add the desired UTXOs to spend as inputs to spend and sign those inputs using SIGHASH_ALL|SIGHASH_ANYONECANPAY signature hash type.
-Extract only the input data from the raw transaction in the following format:
-compactSize uint (varying byte length) - Number of inputs in this transaction.
-txIns (varying byte length) - Transaction inputs. See description of txIn below.
-outpoint (36 bytes) - The previous outpoint being spent. See description of outpoint below.
-char[32] (32 bytes) - The TXID of the transaction holding the output to spend. The TXID is a hash provided in internal byte order.
-uint32_t (4 bytes) - The output index number of the specific output to spend from the transaction. The first output is 0x00000000.
-compactSize uint (varying byte length) - The number of bytes in the signature script. Maximum is 10,000 bytes.
-char[] (varying byte length) - scriptSig. A script-language script which satisfies the conditions placed in the outpoint’s pubkey script.
-Uint32_t (4 bytes) - Sequence value. Must be set as 0xffffffff
-Broadcast the Payment message. The Payment message includes:
-<chunk_count_int> The number of chained transactions representing “chunks” of attached data
-<signal_tx_id> The transaction hex of the crowdfund Offer Signal being paid to
-<chunk_X_data_bytes> The extracted input data from (d)
-The Offering Party aggregates all Payment messages by searching the blockchain for Payments which correspond to the original <signal_tx_id>. Upon aggregating sufficient valid Payments, the Offering Party constructs a valid transaction using the outputs from the original Offer Signal and the inputs from the Payments. The Offering Party then broadcasts this transaction to the network. If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
+1. The Offering Party broadcasts a Signal with information about the desired exchange. This information includes:
+	* ```<campaign_uri_utf8>``` A URI for the crowdfunding campaign. This can be a web URI, and IPFS URI, a [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) URI, or any other valid informational URI. The URI prefix (if appropriate) should be included for disambiguation.
+	* ```<out_count_and_outs_bytes>``` A representation of the output portion of the intended transaction. The format of this data is described at [https://bitcoin.org/en/developer-reference#raw-transaction-format](https://bitcoin.org/en/developer-reference#raw-transaction-format) and is as follows:
+		* *compactSize uint* (varying byte length) - Number of outputs in this transaction.
+		* *txOuts* (varying byte length) - Transaction outputs, concatenated. See description of txOut below.
+			* *int64_t* (8 bytes) - Number of satoshis to spend. May be zero; the sum of all outputs may not exceed the sum of satoshis previously spent to the outpoints provided in the input section.
+			* *compactSize uint* (1+ bytes) - Number of bytes in the pubkey script. Maximum is 10,000 bytes.
+			* *char[]* (varying byte length) - The *scriptPubKey*. Defines the conditions which must be satisfied to spend this output.
+
+2. The Accepting Party finds the offered Signal. In most cases, the Offering Party will publicize the offer as a means to attract funders. Using the output data in the Signal, the Accepting party constructs a set of signed inputs (to be used as a portion of the crowdfund) with the following procedure:
+	* Create a new (Version 1) transaction with ```nLocktime=0``` and each input’s ```nSequence=UINT_MAX``` (```0xffffffff```)
+	* Add the outputs as defined in the Offer Signal
+	* Add the desired UTXOs to spend as inputs to spend and sign those inputs using ```SIGHASH_ALL|SIGHASH_ANYONECANPAY``` signature hash type.
+	* Extract only the input data from the raw transaction in the following format:
+		* *compactSize uint* (varying byte length) - Number of inputs in this transaction.
+		* *txIns* (varying byte length) - Transaction inputs. See description of txIn below.
+			* *outpoint* (36 bytes) - The previous outpoint being spent. See description of outpoint below.
+				* *char[32]* (32 bytes) - The TXID of the transaction holding the output to spend. The TXID is a hash provided in internal byte order.
+				* *uint32_t* (4 bytes) - The output index number of the specific output to spend from the transaction. The first output is ```0x00000000```.
+			* *compactSize uint* (varying byte length) - The number of bytes in the signature script. Maximum is 10,000 bytes.
+			* *char[]* (varying byte length) - scriptSig. A script-language script which satisfies the conditions placed in the outpoint’s pubkey script.
+			* *Uint32_t* (4 bytes) - Sequence value. Must be set as ```0xffffffff```
+	* Broadcast the Payment message. The Payment message includes:
+		* ```<chunk_count_int>``` The number of chained transactions representing “chunks” of attached data
+		* ```<signal_tx_id>``` The transaction hex of the crowdfund Offer Signal being paid to
+		* ```<chunk_X_data_bytes>``` The extracted input data from (d)
+
+3. The Offering Party aggregates all Payment messages by searching the blockchain for Payments which correspond to the original ```<signal_tx_id>```. Upon aggregating sufficient valid Payments, the Offering Party constructs a valid transaction using the outputs from the original Offer Signal and the inputs from the Payments. The Offering Party then broadcasts this transaction to the network. If the transaction is accepted, he spends the **Baton UTXO** from his original Signal, marking the Signal as spent.
 
 # 4. Considerations
 
 ## 4.1 Completing or Canceling An Offer Signal
-A Signal is considered active (accepting Payments) as long as it’s “Baton UTXO” - the UTXO at index 1 (the second output) - is unspent. Upon successful completion and execution of a SWaP protocol transaction, or if the Offering Party wishes to cancel the Offer, said party simply spends the Baton UTXO.
+A Signal is considered active (accepting Payments) as long as it’s **“Baton UTXO”** - the UTXO at index 1 (the second output) - is unspent. Upon successful completion and execution of a SWaP protocol transaction, or if the Offering Party wishes to cancel the Offer, said party simply spends the Baton UTXO.
 New Payments must never be sent for a completed or cancelled Offer Signal and any wallets supporting SWaP Protocol must make this check on any prospective Offers.
 
 ## 4.2 Reserving UTXOs
