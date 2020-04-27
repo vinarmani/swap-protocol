@@ -103,68 +103,71 @@ The metadata OP_RETURN messages for the various types of Payments are as follows
 
 Multi-Party Escrow (Type 2) transactions will typically rely on data from an on-chain oracle to negotiate the initial contract and provide signatures and other data necessary to spend the contract UTXO(s). Oracles utilize the chained Bitcoin Files Protocol messages to publish both the Proposal and Result data used by the parties in Type 2 transactions. Oracle Signal data is in JSON format.
 
-
 # 3. Process
 
 ## 3.1 SLP Atomic Swap (Type 1)
 
 The procedure for negotiating and executing a BCH/SLP exchange via the SWaP protocol is as follows:
 
+1. The Offering Party broadcasts a Signal with information about the desired exchange. This information includes:
+	* ```<token_id_bytes>``` The SLP token ID
+	* ```<BUY_or_SELL_ascii>``` Whether the Signal is an offer to BUY or SELL SLP tokens in exchange for BCH
+	* ```<rate_in_sats_int>``` The offered exchange rate. This is the number of BCH satoshis to be exchanged for 1 unit of the SLP token
+	* ```<proof_of_reserve_int>``` Whether or not the inputs of the Signal transaction should be used as cryptographic proof of control over reserves of either SLP tokens or BCH
+	* ```<exact_utxo_vout_hash_bytes>``` The transaction hash of the UTXO being offered
+	* ```<exact_utxo_index_int>``` The index (vout=n) of the UTXO being offered
+	* ```<minimum_sats_to_exchange_int>``` The minimum value of the offered UTXO that can be exchanged. Any remaining funds should be sent back to the same address that currently contains the UTXO, as change
 
-The Offering Party broadcasts a Signal with information about the desired exchange. This information includes:
-<token_id_bytes> The SLP token ID
-<BUY_or_SELL_ascii> Whether the Signal is an offer to BUY or SELL SLP tokens in exchange for BCH
-<rate_in_sats_int> The offered exchange rate. This is the number of BCH satoshis to be exchanged for 1 unit of the SLP token
-<proof_of_reserve_int> Whether or not the inputs of the Signal transaction should be used as cryptographic proof of control over reserves of either SLP tokens or BCH
-<exact_utxo_vout_hash_bytes> The transaction hash of the UTXO being offered
-<exact_utxo_index_int> The index (vout=n) of the UTXO being offered
-<minimum_sats_to_exchange_int> The minimum value of the offered UTXO that can be exchanged. Any remaining funds should be sent back to the same address that currently contains the UTXO, as change
-The Accepting Party finds the offered Signal, either by watching for Signals matching a certain pattern to be broadcast to the network (ie. “Selling SPICE tokens at a rate less than or equal to X”) or searching the blockchain for that pattern. Using the information in the Signal, the Accepting Party constructs a collaborative transaction, signs the inputs he is contributing, and broadcasts a Payment message, with the raw transaction of the partially-signed transaction as the attached data. The Payment message includes:
-<chunk_count_int> The number of chained transactions representing “chunks” of attached data
-<signal_tx_id> The transaction hex of the Signal being paid to
-<chunk_X_data_bytes> The attached data
-The Offering Party watches for broadcast Payment messages for his originally offered Signal. Upon finding one, he downloads the partially signed transaction data and validates the transaction to be sure it fulfills the requirements of his original Signal. If the transaction is valid and meets the requirements, he
-Signs his own inputs
-Broadcasts the transaction to the blockchain
-If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
+
+2. The Accepting Party finds the offered Signal, either by watching for Signals matching a certain pattern to be broadcast to the network (ie. *“Selling SPICE tokens at a rate less than or equal to X”*) or searching the blockchain for that pattern. Using the information in the Signal, the Accepting Party constructs a collaborative transaction, signs the inputs he is contributing, and broadcasts a Payment message, with the raw transaction of the partially-signed transaction as the attached data. The Payment message includes:
+	* ```<chunk_count_int>``` The number of chained transactions representing “chunks” of attached data
+	* ```<signal_tx_id>``` The transaction hex of the Signal being paid to
+	* ```<chunk_X_data_bytes>``` The attached raw transaction data
+
+
+3. The Offering Party watches for broadcast Payment messages for his originally offered Signal. Upon finding one, he downloads the partially signed transaction data and validates the transaction to be sure it fulfills the requirements of his original Signal. If the transaction is valid and meets the requirements, he
+	* Signs his own inputs
+	* Broadcasts the transaction to the blockchain
+	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
 
 ## 3.2 Multi-Party Escrow (Type 2)
 
 The procedure for negotiating and executing a two-party escrow transaction via the SWaP protocol is as follows:
 
+1. The Offering Party broadcasts a Signal with information about the desired escrow contract. This information includes:
+	* ```<oracle_bfp_bytes>``` The transaction hash of the Bitcoin Files Protocol transaction containing the oracle data
+	* ```<contract_terms_index_int>``` The index of the “terms” object in the json object referenced by <oracle_bfp_bytes>
+	* ```<contract_party_index>``` The index of the “party” in the object referenced by <contract_terms_index_int>. This is the side of the escrow that the Offering Party wishes to take.
+	* ```<compiler_id_ascii>``` The standardized identifier for the script compiler upon which the contract terms object is based
+	* ```<compiler_contract_version_ascii>``` The identifier for the particular contract template to be used by the script compiler
+	* ```<pubkey_bytes>``` The Offering Party’s public key to be used in the escrow contract. This can coincide with the address to which the Signal has been sent, but that is not required.
+	* ```<exact_utxo_vout_hash_bytes>``` The transaction hash of the UTXO being offered
+	* ```<exact_utxo_index_int>``` The index (vout=n) of the UTXO being offered
+	* ```<appended_scriptPubKey_bytes*>``` (optional) A scriptPubKey representing an additional required output address, such as an address for a fee output. (*Defaults to 0 if no additional output should be appended*)
+	* ```<appended_sats_int*>``` (optional) A value representing the number of satoshis to be sent to the additional appended output. (*Defaults to 0 if no additional output should be appended*)
 
-The Offering Party broadcasts a Signal with information about the desired escrow contract. This information includes:
-<oracle_bfp_bytes> The transaction hash of the Bitcoin Files Protocol transaction containing the oracle data
-<contract_terms_index_int> The index of the “terms” object in the json object referenced by <oracle_bfp_bytes>
-<contract_party_index> The index of the “party” in the object referenced by <contract_terms_index_int>. This is the side of the escrow that the Offering Party wishes to take.
-<compiler_id_ascii> The standardized identifier for the script compiler upon which the contract terms object is based
-<compiler_contract_version_ascii> The identifier for the particular contract template to be used by the script compiler
-<pubkey_bytes> The Offering Party’s public key to be used in the escrow contract. This can coincide with the address to which the Signal has been sent, but that is not required.
-<exact_utxo_vout_hash_bytes> The transaction hash of the UTXO being offered
-<exact_utxo_index_int> The index (vout=n) of the UTXO being offered
-<appended_scriptPubKey_bytes*> A scriptPubKey representing an additional required output address, such as an address for a fee output. (Defaults to 0 if no additional output should be appended)
-<appended_sats_int*> A value representing the number of satoshis to be sent to the additional appended output. (Defaults to 0 if no additional output should be appended)
-The Accepting Party finds the offered Signal, either by watching for Signals matching a certain pattern to be broadcast to the network (ie. “Wagering on UFC Championship fight, taking the challenger to win, using jeton-lib compiler and the ee01 escrow template”) or searching the blockchain for that pattern. Using the Signal parameters and Oracle data the Accepting Party crafts a partially signed transaction using the following procedure
-Identify the specific compiler and template to be used to create the script contract
-Construct the script contract using the Offering Party’s provided public key (in the Signal’s <pubkey_bytes>) and the Accepting Party’s public key assigned to the appropriate contract parties
-Begin construction of a transaction with the Offering Party’s offered UTXO (defined by <exact_utxo_vout_hash_bytes> and <exact_utxo_index_int> in the Signal) as the first input.
-Add the P2SH escrow output derived from the script contract created in (b). Assign the value of the escrow output as twice the value of the offered UTXO minus half the value of <appended_sats_int>: 
-2 * ( offered_utxo_value - ( <appended_sats_int> / 2 ) )
-Append additional output if the Signal includes <appended_scriptPubKey_bytes> and <appended_sats_int>
-Add additional inputs and change outputs necessary to make the transaction valid, though inputs have not been signed
+2. The Accepting Party finds the offered Signal, either by watching for Signals matching a certain pattern to be broadcast to the network (ie. *“Wagering on UFC Championship fight, taking the challenger to win, using jeton-lib compiler and the ee01 escrow template”*) or searching the blockchain for that pattern. Using the Signal parameters and Oracle data the Accepting Party crafts a partially signed transaction using the following procedure
+	* Identify the specific compiler and template to be used to create the script contract
+	* Construct the script contract using the Offering Party’s provided public key (in the Signal’s ```<pubkey_bytes>```) and the Accepting Party’s public key assigned to the appropriate contract parties
+	* Begin construction of a transaction with the Offering Party’s offered UTXO (defined by ```<exact_utxo_vout_hash_bytes>``` and ```<exact_utxo_index_int>``` in the Signal) as the first input.
+	* Add the P2SH escrow output derived from the script contract created in (b). Assign the value of the escrow output as twice the value of the offered UTXO minus half the value of ```<appended_sats_int>```:
+		* ***2 * ( offered_utxo_value - ( <appended_sats_int> / 2 ) )***
+	* Append additional output if the Signal includes ```<appended_scriptPubKey_bytes>``` and ```<appended_sats_int>```
+	* Add additional inputs and change outputs necessary to make the transaction valid, though inputs have not been signed
 Sign inputs contributed by Accepting Party
-Broadcast a Payment message, with the raw transaction of the partially-signed transaction as the attached data. The Payment message includes:
-<chunk_count_int> The number of chained transactions representing “chunks” of attached data
-<signal_tx_id> The transaction hex of the Signal being paid to
-<p2sh_scriptPubKey>
-<chunk_X_data_bytes> The attached data is concatenated bytes in the following order:
-32-bit Little Endian integer (4 bytes in length) representing the byte length of the subscript (script before hashing, used during spending on a P2SH input) which translates to <p2sh_scriptPubKey>
-The subscript data
-The raw transaction data
-The Offering Party finds the Payment message, either by watching for Payments with a <signal_tx_id> matching the transaction hash of the original offer Signal or by searching the blockchain for such Payment messages. Upon finding such a message, he downloads the partially signed transaction data and validates the transaction to be sure it fulfills the requirements of his original Signal. If the transaction is valid and meets the requirements, he
-Signs his own inputs
-Broadcasts the transaction to the blockchain
-If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
+	* Broadcast a Payment message, with the raw transaction of the partially-signed transaction as the attached data. The Payment message includes:
+		* ```<chunk_count_int>``` The number of chained transactions representing “chunks” of attached data
+		* ```<signal_tx_id>``` The transaction hex of the Signal being paid to
+		* ```<p2sh_scriptPubKey>```
+		* ```<chunk_X_data_bytes>``` The attached data is concatenated bytes in the following order:
+			* 32-bit Little Endian integer (4 bytes in length) representing the byte length of the subscript (script before hashing, used during spending on a P2SH input) which translates to ```<p2sh_scriptPubKey>```
+			* The subscript data
+			* The raw transaction data
+
+3. The Offering Party finds the Payment message, either by watching for Payments with a <signal_tx_id> matching the transaction hash of the original offer Signal or by searching the blockchain for such Payment messages. Upon finding such a message, he downloads the partially signed transaction data and validates the transaction to be sure it fulfills the requirements of his original Signal. If the transaction is valid and meets the requirements, he
+	* Signs his own inputs
+	* Broadcasts the transaction to the blockchain
+	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
 
 ## 3.3 Threshold Crowdfunding (Type 3)
 
