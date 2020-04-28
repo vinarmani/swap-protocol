@@ -107,6 +107,8 @@ Multi-Party Escrow (Type 2) transactions will typically rely on data from an on-
 
 ## 3.1 SLP Atomic Swap (Type 1)
 
+![Exchange Diagram](images/swap-exchange-diagram.png)
+
 The procedure for negotiating and executing a BCH/SLP exchange via the SWaP protocol is as follows:
 
 1. The Offering Party broadcasts a Signal with information about the desired exchange. This information includes:
@@ -131,6 +133,8 @@ The procedure for negotiating and executing a BCH/SLP exchange via the SWaP prot
 	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
 
 ## 3.2 Multi-Party Escrow (Type 2)
+
+![Escrow Diagram](images/swap-escrow-diagram.png)
 
 The procedure for negotiating and executing a two-party escrow transaction via the SWaP protocol is as follows:
 
@@ -170,6 +174,8 @@ Sign inputs contributed by Accepting Party
 	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
 
 ## 3.3 Threshold Crowdfunding (Type 3)
+
+![Crowdfund Diagram](images/swap-crowdfund-diagram.png)
 
 The procedure for negotiating and executing a Threshold Crowdfund via the SWaP protocol is as follows:
 
