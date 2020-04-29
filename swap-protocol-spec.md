@@ -95,19 +95,19 @@ A Payment is a series of data chunks, representing a partially signed Bitcoin Ca
 The metadata OP_RETURN messages for the various types of Payments are as follows:
 
 **SLP Atomic Swap (Type 1):** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. The required format for the message is:
-* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x01> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```
+* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x01> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```<br><br>
 	* ```<chunk_X_data_bytes>``` consists of the following data:
 		1. The raw transaction data
 
 **Multi-Party Escrow (Type 2):** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. For validation purposes, the ScriptPubKey of the script contract is also included in the metadata. The required format for the message is:
-* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x02> <chunk_count_int> <signal_tx_id> <p2sh_scriptPubKey> <chunk_X_data_bytes>```
+* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x02> <chunk_count_int> <signal_tx_id> <p2sh_scriptPubKey> <chunk_X_data_bytes>```<br><br>
 	* ```<chunk_X_data_bytes>``` consists of the following data, concatenated:
 		1. *uint32_t* (4 bytes) - The byte length of the P2SH subscript in (b)
 		2. The P2SH subscript that must be included in the scriptSig when spending the escrow UTXO being created
 		3. The raw transaction data
 
 **Threshold Crowdfunding (Type 3):** This Payment contains only the data for signed Transaction Inputs (TxIns) precisely as would appear in a the raw data of a transaction spending to the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
-* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x03> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```
+* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x03> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```<br><br>
 	* ```<chunk_X_data_bytes>``` consists of the ordered and concatenated raw inputs data as described in Section 3.3
 
 ## 2.2 Oracle Signals
