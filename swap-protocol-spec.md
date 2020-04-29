@@ -222,7 +222,7 @@ The procedure for negotiating and executing a Threshold Crowdfund via the SWaP p
 # 4. Considerations
 
 ## 4.1 Completing or Canceling An Offer Signal
-A Signal is considered active (accepting Payments) as long as it’s **“Baton UTXO”** - the UTXO at index 1 (the second output) - is unspent. Upon successful completion and execution of a SWaP protocol transaction, or if the Offering Party wishes to cancel the Offer, said party simply spends the Baton UTXO.
+A Signal is considered active (accepting Payments) as long as its **“Baton UTXO”** - the UTXO at index 1 (the second output) - is unspent. Upon successful completion and execution of a SWaP protocol transaction, or if the Offering Party wishes to cancel the Offer, said party simply spends the Baton UTXO.
 New Payments must never be sent for a completed or cancelled Offer Signal and any wallets supporting SWaP Protocol must make this check on any prospective Offers.
 
 ## 4.2 Reserving UTXOs
