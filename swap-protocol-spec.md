@@ -228,6 +228,8 @@ New Payments must never be sent for a completed or cancelled Offer Signal and an
 ## 4.2 Reserving UTXOs
 A signed input in a Payment message has not actually been spent. It’s associated UTXO is still available to be spent in another transaction. Such spending would render the Payment message invalid and unusable. Wallets implementing the SWaP Protocol must implement a procedure for reserving (quarantining) UTXOs in pending Payments.
 In all cases, wallets should regularly check to see if the baton UTXO for the associated Offer Signal has been spent. If it has, then the Offer has been closed and any UTXOs being held in reserve can be released to the spendable pool in the user’s wallet.
+
 In the case of Type 1 (exchange) and Type 2 (escrow) Payments, the length of time required for this reserve should be no longer than a matter of minutes, as such transactions should settle quickly. Wallets should allow removal from quarantine by manual user action. This effectively “cancels” the pending Payment.
+
 In the case of a Type 3 (crowdfund) Payment, the end date for the campaign should be specified in the data at the ```<campaign_uri_utf8>``` defined in the Offer Signal. For Type 3 Payments, the reserve time should be indeterminate, and wallets should only allow removal from quarantine by manual user action or if the Signal is spent.
 To effectively “cancel” a pending Payment, the Accepting Party need only spend the UTXO(s) being used as an input in the Payment message.
