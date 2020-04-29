@@ -77,12 +77,16 @@ A Signal is a message consisting of structured metadata within a single OP_RETUR
 **Multi-Party Escrow (Type 2):** This Signal is broadcast by a party wishing to find a counterparty to co-fund a P2SH script contract. The canonical application is multi-party escrow (such as wagering) using oracle data. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x02> <oracle_bfp_bytes> <contract_terms_index_int> <contract_party_index> <compiler_id_ascii> <compiler_contract_version_ascii> <pubkey_bytes> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <appended_scriptPubKey_bytes*> <appended_sats_int*>```
 
-[Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/b03883ca0b106ea5e7113d6cbe46b9ec37ac6ba437214283de2d9cf2fbdc997f)
+[Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/d7cbeaab6d02769464f9c71a6efd8cd2682d728d7e5de3ac278372b1b81c9d83)
 
 ```OP_RETURN 53575000 01 02 974b3bf766b36434a21fe6f8782d8056f932d33ae401e92cf31a88204a21ea3e 00 01 6a65746f6e 653031 0299edb7a63380305c32b6fd54e09f7c2cbcf85b7182a691b065d8e5aff16ef61f 3757612cf36aae7cebaf71099139edd19e67cb5bdddc40514c38fe91341db5a6 01 76a91410c1db6f3076e020974ef540199e7ae4b76fbafa88ac 07d0```
 
 ***Threshold Crowdfunding (Type 3):*** This Signal is broadcast by a party wishing to fund a transaction with a given set of outputs by aggregating inputs from many parties. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x03> <campaign_uri_utf8> <out_count_and_outs_bytes>```
+
+[Type 3 Example (ASM):](https://explorer.bitcoin.com/bch/tx/565c84990aacfbd006d4ed2ee14bfb0f3bb27a84a6c9adcabccb6fb8e17e64c5)
+
+```OP_RETURN 53575000 01 03 68747470733a2f2f7377617063726f776466756e642e636f6d2f736f6d6563616d706169676e 02a0860100000000001976a914da74026d67264c0acfede38e8302704ef7d8cfb288acf0490200000000001976a914ac656e2dd5378ca9c45fd5cd44aa7da87c7bfa8288ac```
 
 ### 2.1.2 Payment
 
@@ -96,7 +100,7 @@ The metadata OP_RETURN messages for the various types of Payments are as follows
 **Multi-Party Escrow (Type 2):** This Payment contains the full data for a transaction, minus the signature(s) on the input(s) contributed by the party that initiated the corresponding Signal. For validation purposes, the ScriptPubKey of the script contract is also included in the metadata. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x02> <chunk_count_int> <signal_tx_id> <p2sh_scriptPubKey> <chunk_X_data_bytes>```
 
-**Threshold Crowdfunding (Type 3):** This Payment contains only the data for a single, signed Transaction Input (TxIn) precisely as it would appear in a transaction spending the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
+**Threshold Crowdfunding (Type 3):** This Payment contains only the data for signed Transaction Inputs (TxIns) precisely as would appear in a the raw data of a transaction spending to the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x03> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```
 
 ## 2.2 Oracle Signals
