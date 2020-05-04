@@ -52,7 +52,7 @@ This protocol specification describes the requirements for handling the negotiat
 
 ## 2.1 Message Classes and Types
 
-The Signal, Watch, and Pay (SWaP) message classes are used to represent different constructs in the communication protocol. In any SWP OP_RETURN message, the SWaP message type is represented by the required field named swp_msg_type. There are currently two classes of messages: Signal and Payment. Each class contains several different types, representing the different types of collaborative transactions the protocol supports.
+The Signal, Watch, and Pay (SWaP) message classes are used to represent different constructs in the communication protocol. In any SWP OP_RETURN message, the SWaP message type is represented by the required field named ```swp_msg_type```. There are currently two classes of messages: Signal and Payment. Each class contains several different types, representing the different types of collaborative transactions the protocol supports.
 
 * `<swp_msg_class = 0x01>`: **A Signal**
   * `<swp_msg_type = 0x01>`: SLP Atomic Swap
