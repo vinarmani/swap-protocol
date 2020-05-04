@@ -19,7 +19,7 @@ The following presents a protocol for facilitating collaborative transactions be
 
 The three types of collaborative transactions that this protocol enables are:
 
-* **SLP Atomic Swaps** - Exchanges of Bitcoin Cash (BCH) satoshis for units of SLP
+* **SLP Atomic Swaps** - Exchanges of Bitcoin Cash (BCH) satoshis for units of a given Simple Ledger Protocol token
 * **Multi-Party Escrow** - Pay-To-Script-Hash outputs where spending is based on data broadcast, on-chain, by an oracle
 * **Threshold Crowdfunding** - Trustless multi-input transactions that are only valid if the aggregate value of all submitted inputs are greater than a predefined output value
 
