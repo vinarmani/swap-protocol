@@ -23,7 +23,7 @@ The three types of collaborative transactions that this protocol enables are:
 * **Multi-Party Escrow** - Pay-To-Script-Hash outputs where spending is based on data broadcast, on-chain, by an oracle
 * **Threshold Crowdfunding** - Trustless multi-input transactions that are only valid if the aggregate value of all submitted inputs are greater than a predefined output value
 
-The protocol extends and adapts many concepts from the Bitcoin Files Protocol.
+The protocol extends and adapts many concepts from the [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md).
 
 ## 1.3 Collaborative Transactions
 
