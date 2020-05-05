@@ -233,3 +233,12 @@ In the case of Type 1 (exchange) and Type 2 (escrow) Payments, the length of tim
 
 In the case of a Type 3 (crowdfund) Payment, the end date for the campaign should be specified in the data at the ```<campaign_uri_utf8>``` defined in the Offer Signal. For Type 3 Payments, the reserve time should be indeterminate, and wallets should only allow removal from quarantine by manual user action or if the Signal is spent.
 To effectively “cancel” a pending Payment, the Accepting Party need only spend the UTXO(s) being used as an input in the Payment message.
+
+
+## Reference Implementations
+
+### Clients
+None currently
+
+### Libraries
+[swap-bch-js](https://github.com/vinarmani/swap-bch-js)
