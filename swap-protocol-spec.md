@@ -1,6 +1,6 @@
 # Signal, Watch, and Pay Protocol Specification
-### Specification version: DRAFT
-### Date published: April 27, 2020
+### Specification version: 0.1
+### Date published: May 7, 2020
 
 ## Author
 Vin Armani
@@ -126,7 +126,7 @@ The procedure for negotiating and executing a BCH/SLP exchange via the SWaP prot
 	* ```<token_id_bytes>``` The SLP token ID
 	* ```<BUY_or_SELL_ascii>``` Whether the Signal is an offer to BUY or SELL SLP tokens in exchange for BCH
 	* ```<rate_in_sats_int>``` The offered exchange rate. This is the number of BCH satoshis to be exchanged for 1 unit of the SLP token
-	* ```<proof_of_reserve_int>``` Whether or not the inputs of the Signal transaction should be used as cryptographic proof of control over reserves of either SLP tokens or BCH
+	* ```<proof_of_reserve_int>``` Whether or not the inputs of the Signal transaction should be used as [cryptographic proof of control over reserves](#43-proof-of-reserves) of either SLP tokens or BCH
 	* ```<exact_utxo_vout_hash_bytes>``` The transaction hash of the UTXO being offered
 	* ```<exact_utxo_index_int>``` The index (vout=n) of the UTXO being offered
 	* ```<minimum_sats_to_exchange_int>``` The minimum value of the offered UTXO that can be exchanged. Any remaining funds should be sent back to the same address that currently contains the UTXO, as change
@@ -234,6 +234,15 @@ In the case of Type 1 (exchange) and Type 2 (escrow) Payments, the length of tim
 In the case of a Type 3 (crowdfund) Payment, the end date for the campaign should be specified in the data at the ```<campaign_uri_utf8>``` defined in the Offer Signal. For Type 3 Payments, the reserve time should be indeterminate, and wallets should only allow removal from quarantine by manual user action or if the Signal is spent.
 To effectively “cancel” a pending Payment, the Accepting Party need only spend the UTXO(s) being used as an input in the Payment message.
 
+## 4.3 Proof Of Reserves
+A valid, signed Bitcoin input represents proof of control over the value in the address (scriptPubKey) associated with the signature (scriptSig) of an input being "spent from" that address. This fact is fundamental to the very nature of Bitcoin. This cryptographic proof can be leveraged by the party making an Exchange (Type 1) Offer Signal to demonstrate control over any amount of funds. The Offering Party can do this simply by spending a single, small (dust) input from any number of addresses in the Signal transaction.
+
+If ```<proof_of_reserve_int = 0x01>``` and ``<exact_utxo_vout_hash_bytes = 0x00>`` in an Exchange Offer Signal, then the Offering Party is communicating an "open offer" and making all UTXOs in the reserves available. Those wishing to spend from those reserve UTXOs should begin from the address associated with the input at index 0 of the Signal transaction when building their Payment. If UTXOs are no longer available from that address, then the Accepting Party should proceed through the reserve addresses in the order of the inputs in the Offer Signal.
+
+The proof of reserves functionality represents an "open window" and, as such, allows for applications such as [fixed exchange rate (pegged) currencies and stablecoins](https://en.wikipedia.org/wiki/Fixed_exchange_rate_system).
+
+## 4.4 Payment Message Encryption
+The final, valid transaction which executes an exchange will, necessarily, make public the inputs and outputs of all parties. However, some payment messages will inevitably be cancelled or otherwise not accepted and executed in a final transaction. In the case of such "unredeemed" payments, the party constructing the Payment message (with valid signatures on inputs) has reduced their privacy somewhat by displaying control of a set of UTXOs. As such, Accepting Parties have some incentive to encrypt their payment message such that only the Offering Party can read it. [Elliptic Curve Integrated Encryption Schemes (ECIES)](https://en.wikipedia.org/wiki/Integrated_Encryption_Scheme) is a natural fit for encryption as it can use native Bitcoin keypairs. Any scheme which can utilize Bitcoin keypairs for the encryption and decryption is viable. This specification does not specifically address encryption, but clients can support any scheme they see fit.
 
 ## Reference Implementations
 
