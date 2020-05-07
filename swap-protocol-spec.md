@@ -108,7 +108,7 @@ The metadata OP_RETURN messages for the various types of Payments are as follows
 
 **Threshold Crowdfunding (Type 3):** This Payment contains only the data for signed Transaction Inputs (TxIns) precisely as would appear in a the raw data of a transaction spending to the outputs in the corresponding Signal. This represents the contribution, of the party making the Payment, to the crowdfunding campaign. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x02> <swp_msg_type = 0x03> <chunk_count_int> <signal_tx_id> <chunk_X_data_bytes>```<br><br>
-	* ```<chunk_X_data_bytes>``` consists of the ordered and concatenated raw inputs data as described in Section 3.3
+	* ```<chunk_X_data_bytes>``` consists of the ordered and concatenated raw inputs data as described in [Section 3.3](#33-threshold-crowdfunding-type-3)
 
 ## 2.2 Oracle Signals
 
