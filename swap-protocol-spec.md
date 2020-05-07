@@ -143,6 +143,25 @@ The procedure for negotiating and executing a BCH/SLP exchange via the SWaP prot
 	* Broadcasts the transaction to the blockchain
 	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
 
+#### Example Transaction
+
+**SWaP Exchange, `<BUY_or_SELL_ascii = SELL>`:**</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **SLP** `<exact_utxo_vout_hash_bytes>` and `<exact_utxo_index_int>` (Signed by Offering Party) | **SLP OP_RETURN** |
+| 1 | **BCH** (Signed by Accepting Party) | **SLP** to Accepting Party Address |
+| 2 | | **BCH** to Offering Party Address |
+| 3 | | **BCH** 546 satoshis  *change to Accepting Party* |
+
+<br>**SWaP Exchange, `<BUY_or_SELL_ascii = BUY>` with necessary miner fee subtracted from offered UTXO and exchange amount calculated accordingly:**</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **SLP** `<exact_utxo_vout_hash_bytes>` and `<exact_utxo_index_int>` (Signed by Accepting Party) | **SLP OP_RETURN** |
+| 1 | **BCH** (Signed by Offering Party) | **SLP** to Offering Party Address |
+| 2 | | **BCH** to Accepting Party Address |
+
 ## 3.2 Multi-Party Escrow (Type 2)
 
 ![Escrow Diagram](images/swap-escrow-diagram.png)
@@ -183,6 +202,27 @@ Sign inputs contributed by Accepting Party
 	* Signs his own inputs
 	* Broadcasts the transaction to the blockchain
 	* If the transaction is accepted, he spends the Baton UTXO from his original Signal, marking the Signal as spent.
+	
+
+#### Example Transaction
+
+**SWaP Escrow:**</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **BCH** `<exact_utxo_vout_hash_bytes>` and `<exact_utxo_index_int>` (Signed by Offering Party) | **BCH** P2SH address representing escrow contract |
+| 1 | **BCH** (Signed by Accepting Party) | **BCH** `<appended_scriptPubKey_bytes>` and `<appended_sats_int>` |
+| 2 | | **BCH** *change to Accepting Party* |
+
+<br>**SWaP Escrow of SLP tokens:**</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **SLP** `<exact_utxo_vout_hash_bytes>` and `<exact_utxo_index_int>` (Signed by Offering Party) | **SLP OP_RETURN** |
+| 1 | **SLP** (Signed by Accepting Party) | **SLP** P2SH address representing escrow contract |
+| 2 | **BCH** *miner fees* (Signed by Accepting Party) | **SLP** `<appended_scriptPubKey_bytes>` and `<appended_sats_int>` |
+| 3 | | **SLP** *change to Accepting Party* |
+| 4 | | **BCH** *change to Accepting Party* |
 
 ## 3.3 Threshold Crowdfunding (Type 3)
 
@@ -218,6 +258,17 @@ The procedure for negotiating and executing a Threshold Crowdfund via the SWaP p
 		* ```<chunk_X_data_bytes>``` The extracted input data from (d)
 
 3. The Offering Party aggregates all Payment messages by searching the blockchain for Payments which correspond to the original ```<signal_tx_id>```. Upon aggregating sufficient valid Payments, the Offering Party constructs a valid transaction using the outputs from the original Offer Signal and the inputs from the Payments. The Offering Party then broadcasts this transaction to the network. If the transaction is accepted, he spends the **Baton UTXO** from his original Signal, marking the Signal as spent.
+
+#### Example Transaction
+
+**SWaP Threshold Crowdfund:**</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **BCH** `SIGHASH_ANYONECANPAY` (Signed by Funding Party #1) | **BCH** `vout=0` from `<out_count_and_outs_bytes>` |
+| 1 | **BCH** `SIGHASH_ANYONECANPAY` (Signed by Funding Party #2) | **BCH** `vout=1` from `<out_count_and_outs_bytes>` |
+| 2 | **BCH** `SIGHASH_ANYONECANPAY` (Signed by Funding Party #3) | **BCH** `vout=2` from `<out_count_and_outs_bytes>` |
+| n | **BCH** `SIGHASH_ANYONECANPAY` (Signed by Funding Party #n) | **BCH** `vout=n` from `<out_count_and_outs_bytes>` |
 
 # 4. Considerations
 
