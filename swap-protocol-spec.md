@@ -1,6 +1,7 @@
 # Signal, Watch, and Pay Protocol Specification
-### Specification version: 0.1
+### Specification version: 0.2
 ### Date published: May 7, 2020
+### Latest revision: May 27, 2020
 
 ## Author
 Vin Armani
@@ -112,7 +113,7 @@ The metadata OP_RETURN messages for the various types of Payments are as follows
 
 ## 2.2 Oracle Signals
 
-Multi-Party Escrow (Type 2) transactions will typically rely on data from an on-chain oracle to negotiate the initial contract and provide signatures and other data necessary to spend the contract UTXO(s). Oracles utilize the chained Bitcoin Files Protocol messages to publish both the Proposal and Result data used by the parties in Type 2 transactions. Oracle Signal data is in JSON format.
+Multi-Party Escrow (Type 2) transactions will typically rely on data from an on-chain oracle to negotiate the initial contract and provide signatures and other data necessary to spend the contract UTXO(s). Oracles utilize the chained Bitcoin Files Protocol messages to publish both the Proposal and Result data used by the parties in Type 2 transactions. Oracle Signal data is in JSON format and the [JSON Oracle Standard](https://github.com/vinarmani/swap-protocol/blob/master/json-oracle-standard.md) has been specifically created to be used with the SWaP Protocol.
 
 # 3. Process
 
