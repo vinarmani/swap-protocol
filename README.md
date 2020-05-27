@@ -6,3 +6,6 @@ A protocol for facilitating collaborative transactions between multiple parties 
 
 #### [URI Scheme Specificaton](https://github.com/vinarmani/swap-protocol/blob/master/swap-uri-scheme.md)
 URI scheme to enable users to easily initiate Signal, Watch, and Pay (SWaP) Protocol transactions by simply clicking links on webpages or scanning QR Codes.
+
+#### [JSON Oracle Standard](https://github.com/vinarmani/swap-protocol/blob/master/json-oracle-standard.md)
+A standard structure for common types of on-chain oracle messages which can be used on their own as sources of immutable data, or leveraged in collaborative transaction protocols such as Signal, Watch, and Pay.
