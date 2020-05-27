@@ -33,7 +33,7 @@ Elements of the query component must not contain characters outside the valid ra
 
 | Placeholder  | Format                                                       |
 | ------------ | ------------------------------------------------------------ |
-| slpurn       | = "swap:" txhash [ "?" params ]                              |
+| swapurn       | = "swap:" txhash [ "?" params ]                              |
 | txhash       | = *hex                                                       |
 | params       | = param [ "&" params ]                                       |
 | param        | = [ d ]                                                      |
