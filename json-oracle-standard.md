@@ -6,9 +6,9 @@
 Vin Armani
 
 # Purpose
-We propose a unified standard for on-chain oracle messages for Bitcoin Cash. These messages are constructed as JavaScript Object Notation (JSON) strings and are stored on the blockchain using the Bitcoin Files Protocol.
+We propose a unified standard for on-chain oracle messages for Bitcoin Cash. These messages are constructed as JavaScript Object Notation (JSON) strings and are stored on the blockchain using the [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md).
 
-JSON oracle messages can be used, on their own, as sources of immutable, timestamped data or they can be used in conjunction with collaborative transaction protocols such as Signal, Watch, and Pay (SWaP).
+JSON oracle messages can be used, on their own, as sources of immutable, timestamped data or they can be used in conjunction with collaborative transaction protocols such as [Signal, Watch, and Pay (SWaP)](https://github.com/vinarmani/swap-protocol/blob/master/swap-protocol-spec.md#22-oracle-signals).
 
 # Oracle Message Types
 This specification describes a general structure for oracle messages as well as defining the particular structure of two types of oracle messages: price and event.
