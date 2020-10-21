@@ -78,9 +78,9 @@ A Signal is a message consisting of structured metadata within a single OP_RETUR
 **Multi-Party Escrow (Type 2):** This Signal is broadcast by a party wishing to find a counterparty to co-fund a P2SH script contract. The canonical application is multi-party escrow (such as wagering) using oracle data. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x02> <oracle_bfp_bytes> <compiler_id_ascii> <compiler_contract_version_ascii> <contract_party_index> <pubkey_bytes> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <contract_terms_bytes> <appended_scriptPubKey_bytes*> <appended_sats_int*>```
 
-[Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/d7cbeaab6d02769464f9c71a6efd8cd2682d728d7e5de3ac278372b1b81c9d83)
+[Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/70c2842e1b2c7eb49ee69cdecf2d6f3cd783c307c4cbeef80f176159c5891484)
 
-```OP_RETURN 53575000 01 02 974b3bf766b36434a21fe6f8782d8056f932d33ae401e92cf31a88204a21ea3e 00 01 6a65746f6e 653031 0299edb7a63380305c32b6fd54e09f7c2cbcf85b7182a691b065d8e5aff16ef61f 3757612cf36aae7cebaf71099139edd19e67cb5bdddc40514c38fe91341db5a6 01 76a91410c1db6f3076e020974ef540199e7ae4b76fbafa88ac 07d0```
+```OP_RETURN 53575000 01 02 2ee326cabee15bab127baad3aadbe39f18877933ea064203de5d08bba9654e69 6a65746f6e 657363726f772d706172656a6173 00 02f5515a2e17826c72011f608d2e8458580ea8cbaba3128abe7f4ae2df4d515729 b6919ed649c4710799cb01e2e66bf0fdb2eccee219fd8c4775d3a85431a9984f 01 2102188904278ebf33059093f596a2697cf3668b3bec9a3a0c6408a455147ab3db93 00```
 
 ***Threshold Crowdfunding (Type 3):*** This Signal is broadcast by a party wishing to fund a transaction with a given set of outputs by aggregating inputs from many parties. The required format for the message is:
 * ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x03> <campaign_uri_utf8> <out_count_and_outs_bytes>```
@@ -171,13 +171,13 @@ The procedure for negotiating and executing a two-party escrow transaction via t
 
 1. The Offering Party broadcasts a Signal with information about the desired escrow contract. This information includes:
 	* ```<oracle_bfp_bytes>``` The transaction hash of the Bitcoin Files Protocol transaction containing the oracle data
-	* ```<contract_terms_index_int>``` The index of the “terms” object in the json object referenced by <oracle_bfp_bytes>
-	* ```<contract_party_index>``` The index of the “party” in the object referenced by <contract_terms_index_int>. This is the side of the escrow that the Offering Party wishes to take.
 	* ```<compiler_id_ascii>``` The standardized identifier for the script compiler upon which the contract terms object is based
 	* ```<compiler_contract_version_ascii>``` The identifier for the particular contract template to be used by the script compiler
+	* ```<contract_party_index>``` The index of the “party” in the object referenced by <contract_terms_index_int>. This is the side of the escrow that the Offering Party wishes to take.
 	* ```<pubkey_bytes>``` The Offering Party’s public key to be used in the escrow contract. This can coincide with the address to which the Signal has been sent, but that is not required.
 	* ```<exact_utxo_vout_hash_bytes>``` The transaction hash of the UTXO being offered
 	* ```<exact_utxo_index_int>``` The index (vout=n) of the UTXO being offered
+	* ```<contract_terms_bytes>``` Representation, in bytes, of the “terms” object in the json object referenced by <oracle_bfp_bytes>
 	* ```<appended_scriptPubKey_bytes*>``` (optional) A scriptPubKey representing an additional required output address, such as an address for a fee output. (*Defaults to 0 if no additional output should be appended*)
 	* ```<appended_sats_int*>``` (optional) A value representing the number of satoshis to be sent to the additional appended output. (*Defaults to 0 if no additional output should be appended*)
 
