@@ -1,7 +1,7 @@
 # Signal, Watch, and Pay Protocol Specification
-### Specification version: 0.2
+### Specification version: 0.3
 ### Date published: May 7, 2020
-### Latest revision: May 27, 2020
+### Latest revision: October 21, 2020
 
 ## Author
 Vin Armani
@@ -76,7 +76,7 @@ A Signal is a message consisting of structured metadata within a single OP_RETUR
 ```OP_RETURN 53575000 01 01 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 53454c4c 0258 00 90dfb75fef5f07e384df4703b853a2741b8e6f3ef31ef8e5187a17fb107547f8 01 00```
 		
 **Multi-Party Escrow (Type 2):** This Signal is broadcast by a party wishing to find a counterparty to co-fund a P2SH script contract. The canonical application is multi-party escrow (such as wagering) using oracle data. The required format for the message is:
-* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x02> <oracle_bfp_bytes> <contract_terms_index_int> <contract_party_index> <compiler_id_ascii> <compiler_contract_version_ascii> <pubkey_bytes> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <appended_scriptPubKey_bytes*> <appended_sats_int*>```
+* ```OP_RETURN <lokad_id_int = 'SWP\x00'> <swp_msg_class = 0x01> <swp_msg_type = 0x02> <oracle_bfp_bytes> <compiler_id_ascii> <compiler_contract_version_ascii> <contract_party_index> <pubkey_bytes> <exact_utxo_vout_hash_bytes> <exact_utxo_index_int> <contract_terms_bytes> <appended_scriptPubKey_bytes*> <appended_sats_int*>```
 
 [Type 2 Example (ASM):](https://explorer.bitcoin.com/bch/tx/d7cbeaab6d02769464f9c71a6efd8cd2682d728d7e5de3ac278372b1b81c9d83)
 
